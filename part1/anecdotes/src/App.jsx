@@ -32,7 +32,7 @@ const App = () => {
   return (
     <div>
       <Display text={anecdotes[selected]}/>
-      <Display text={"has " + points[selected] + " points"}/>
+      <Display text={"has " + points[selected] + " votes"}/>
       <Button handleClick={vote} text="vote"/>
       <Button handleClick={randomAnecdote} text="next anecdote"/>
     </div>
