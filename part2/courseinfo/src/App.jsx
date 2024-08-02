@@ -1,18 +1,10 @@
+import Course from './components/Course'
 
-const Course = ({course}) =>{
-  const total = () => course.parts.reduce((sum, part) =>( sum += part.exercises), 0)
-  return (
-    <div>
-      <h2> {course.name} </h2>
-      {course.parts.map(part => <p key={part.id}>{part.name} {part.exercises}</p>)}
-      <b>total of {total()} exercises</b>
-    </div>
-  )
-}
+const Header = ({name}) => <h1> {name} </h1>
 
 const Curriculum = ({courses}) =>(
   <div>
-    <h1>Web development curriculum</h1>
+    <Header name="Web development curriculum"/>
     {courses.map(course => <Course course={course} key={course.id}/>)}
   </div>
 )
