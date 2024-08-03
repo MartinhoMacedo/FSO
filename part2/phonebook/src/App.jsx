@@ -1,24 +1,33 @@
 import { useState } from 'react'
 
+const Person = ({person}) => <div> {person.name} </div>
+
+const Persons = ({persons}) =>(
+  <div> {persons.map(person => <Person person={person} key={person.name}/>)} </div>
+)
+
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas' }
   ])
   const [newName, setNewName] = useState('')
 
+  const nameNotUsed = (name) => persons.every((person) =>{
+    return person.name != name
+  })
+
   const addName = (event) => {
     event.preventDefault()
     const personObject = {name: newName}
-    setPersons(persons.concat(personObject))
-    setNewName('')
+
+    if(nameNotUsed(newName)){
+      setPersons(persons.concat(personObject))
+      setNewName('')
+      return
+    }
+    alert(`${newName} is already added to phonebook`)
   }
-
-  const Person = ({person}) => <div> {person.name} </div>
-
-  const Persons = ({persons}) =>(
-    <div> {persons.map(person => <Person person={person} key={person.name}/>)} </div>
-  )
-
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
