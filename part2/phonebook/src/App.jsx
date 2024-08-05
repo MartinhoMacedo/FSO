@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personsService from './services/persons'
+
 
 
 const Person = ({person}) => <div> {person.name} {person.number} </div>
@@ -80,11 +82,14 @@ const App = () => {
     const personObject = {name: newName,
                           number: newNumber
                          }
-
     if(nameNotUsed(newName)){
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personsService.create(personObject).then(
+        newPersons => {
+          setPersons(persons.concat(newPersons))
+          setNewName('')
+          setNewNumber('')
+        }
+      )
       return
     }
     alert(`${newName} is already added to phonebook`)
