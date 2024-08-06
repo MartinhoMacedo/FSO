@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
-const DeleteButton = ({id, setPersons, persons}) => {
+const DeleteButton = ({person, setPersons, persons}) => {
   const deleteClick = () => {
-    personsService.deleteEntry(id).then(
+
+    if(!window.confirm(`Delete ${person.name} ?`)){
+      return
+    }
+
+    personsService.deleteEntry(person.id).then(
       removedPerson => {
         setPersons(
-          persons.toSpliced(persons.findIndex(person => person.id === removedPerson.id), 1)
+          persons.toSpliced(
+            persons.findIndex(tempPerson => tempPerson.id === removedPerson.id), 1
+          )
         )
       }
     )
@@ -18,7 +25,9 @@ const DeleteButton = ({id, setPersons, persons}) => {
 const Person = ({person, persons, setPersons}) =>
       <div>
         {person.name} {person.number} <DeleteButton
-                                        id={person.id} setPersons={setPersons} persons={persons}
+                                        person={person}
+                                        setPersons={setPersons}
+                                        persons={persons}
                                       />
       </div>
 
