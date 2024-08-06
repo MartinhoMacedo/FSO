@@ -1,14 +1,35 @@
 import { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
+const DeleteButton = ({id, setPersons, persons}) => {
+  const deleteClick = () => {
+    personsService.deleteEntry(id).then(
+      removedPerson => {
+        setPersons(
+          persons.toSpliced(persons.findIndex(person => person.id === removedPerson.id), 1)
+        )
+      }
+    )
+  }
 
+  return <button onClick={deleteClick}>Delete</button>
+}
 
-const Person = ({person}) => <div> {person.name} {person.number} </div>
+const Person = ({person, persons, setPersons}) =>
+      <div>
+        {person.name} {person.number} <DeleteButton
+                                        id={person.id} setPersons={setPersons} persons={persons}
+                                      />
+      </div>
 
-const Persons = ({persons, newSearch}) =>{
+const Persons = ({persons, newSearch, setPersons}) =>{
   const tempPersons = newSearch === '' ? persons :
         persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
-  return <div> {tempPersons.map(person => <Person person={person} key={person.name}/>)} </div>
+  return <div>
+           {tempPersons.map(person =>
+             <Person person={person} setPersons={setPersons} persons={persons} key={person.name}/>
+           )}
+        </div>
 }
 
 const Filter = ({newSearch, setNewSearch}) => {
@@ -93,8 +114,6 @@ const App = () => {
     alert(`${newName} is already added to phonebook`)
   }
 
-
-
   return (
     <div>
       <h2>Phonebook</h2>
@@ -110,7 +129,7 @@ const App = () => {
         <div> <button type="submit">add</button> </div>
       </form>
       <h3>Numbers</h3>
-      <Persons persons={persons} newSearch={newSearch}/>
+      <Persons persons={persons} newSearch={newSearch} setPersons={setPersons}/>
     </div>
   )
 }

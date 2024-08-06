@@ -5,5 +5,7 @@ const create = newObject => axios.post(baseUrl, newObject).then(response => resp
 
 const getAll = () => axios.get(baseUrl).then(response => response.data)
 
+const deleteEntry = (id) => axios.delete(`${baseUrl}/${id}`).then(response => response.data)
 
-export default { create, getAll }
+
+export default { create, getAll, deleteEntry }
