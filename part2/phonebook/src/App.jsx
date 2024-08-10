@@ -1,7 +1,48 @@
 import { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
-const DeleteButton = ({person, setPersons, persons}) => {
+const ErrorMessage = ({message}) => {
+  const errorMessageStyle = {
+      color: 'red',
+      backgroundColor: 'lightGrey',
+      fontSize: 20,
+      borderStyle: 'solid',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10
+  }
+
+  if (message === null) return null
+
+  return(
+    <div style={errorMessageStyle}>
+      {message}
+    </div>
+  )
+}
+
+const Notification = ({message}) => {
+
+  const notificationStyle = {
+    color: 'green',
+    backgroundColor: 'lightGrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  if (message === null) return null
+
+  return (
+    <div style={notificationStyle}>
+      {message}
+    </div>
+  )
+}
+
+const DeleteButton = ({person, setPersons, persons, setErrorMessage}) => {
   const deleteClick = () => {
 
     if(!window.confirm(`Delete ${person.name} ?`)){
@@ -16,27 +57,36 @@ const DeleteButton = ({person, setPersons, persons}) => {
           )
         )
       }
-    )
+    ).catch(error => {
+      setErrorMessage(`Information of ${person.name} already been removed from server`)
+    })
   }
 
   return <button onClick={deleteClick}>Delete</button>
 }
 
-const Person = ({person, persons, setPersons}) =>
+const Person = ({person, persons, setPersons, setErrorMessage}) =>
       <div>
         {person.name} {person.number} <DeleteButton
                                         person={person}
                                         setPersons={setPersons}
                                         persons={persons}
+                                        setErrorMessage={setErrorMessage}
                                       />
       </div>
 
-const Persons = ({persons, newSearch, setPersons}) =>{
+const Persons = ({persons, newSearch, setPersons, setErrorMessage}) =>{
   const tempPersons = newSearch === '' ? persons :
         persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()))
   return <div>
            {tempPersons.map(person =>
-             <Person person={person} setPersons={setPersons} persons={persons} key={person.name}/>
+             <Person
+               person={person}
+               setPersons={setPersons}
+               persons={persons}
+               key={person.name}
+               setErrorMessage={setErrorMessage}
+             />
            )}
         </div>
 }
@@ -90,6 +140,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect( () => {
     console.log('effect')
@@ -121,25 +173,42 @@ const App = () => {
           setNewNumber('')
         }
       )
+      setNotification(`Added ${newName}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 2000)
       return
     }
 
     if(!window.confirm(`${newName} is already added to phonebook, replace the old number
 with a new one?`)) return
 
-    // alert(`${newName} is already added to phonebook`)
     personsService.update(persons[personIdx].id, personObject).then(
       updatedPerson => {
         setPersons(persons.toSpliced(personIdx, 1, updatedPerson))
         setNewName('')
         setNewNumber('')
+        setNotification(`Updated ${newName} number`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 2000)
       }
-    )
+    ).catch(error => {
+      setErrorMessage(`Information of ${newName} already been removed from server`)
+      setTimeout(() => {
+          setErrorMessage(null)
+        }, 2000)
+    })
+
+
+
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message = {notification}/>
+      <ErrorMessage message = {errorMessage}/>
       <Filter newSearch={newSearch} setNewSearch={setNewSearch}/>
       <form onSubmit={addName}>
       <h3>Add a new</h3>
@@ -152,7 +221,12 @@ with a new one?`)) return
         <div> <button type="submit">add</button> </div>
       </form>
       <h3>Numbers</h3>
-      <Persons persons={persons} newSearch={newSearch} setPersons={setPersons}/>
+      <Persons
+        persons={persons}
+        newSearch={newSearch}
+        setPersons={setPersons}
+        setErrorMessage={setErrorMessage}
+      />
     </div>
   )
 }
