@@ -7,5 +7,8 @@ const getAll = () => axios.get(baseUrl).then(response => response.data)
 
 const deleteEntry = (id) => axios.delete(`${baseUrl}/${id}`).then(response => response.data)
 
+const update = (id, newObject) => axios.put(`${baseUrl}/${id}`, newObject).
+      then(response => response.data)
 
-export default { create, getAll, deleteEntry }
+
+export default { create, getAll, deleteEntry, update}

@@ -105,11 +105,14 @@ const App = () => {
     return person.name != name
   })
 
+
   const addName = (event) => {
     event.preventDefault()
     const personObject = {name: newName,
                           number: newNumber
                          }
+    const personIdx = persons.findIndex(tempPerson => tempPerson.name === newName)
+
     if(nameNotUsed(newName)){
       personsService.create(personObject).then(
         newPersons => {
@@ -120,7 +123,18 @@ const App = () => {
       )
       return
     }
-    alert(`${newName} is already added to phonebook`)
+
+    if(!window.confirm(`${newName} is already added to phonebook, replace the old number
+with a new one?`)) return
+
+    // alert(`${newName} is already added to phonebook`)
+    personsService.update(persons[personIdx].id, personObject).then(
+      updatedPerson => {
+        setPersons(persons.toSpliced(personIdx, 1, updatedPerson))
+        setNewName('')
+        setNewNumber('')
+      }
+    )
   }
 
   return (
