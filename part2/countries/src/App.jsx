@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
+import Country from './components/Country'
+
+const CountryName = ({name}) => <div> {name} </div>
 
 const ListCountries = ({countries, searched, setSearched}) => {
   if( countries === null ) return null
@@ -7,17 +10,18 @@ const ListCountries = ({countries, searched, setSearched}) => {
   const filteredCountries = countries.
         filter(country => country.name.common.toLowerCase().includes(searched.toLowerCase()))
 
-  // each country printed should be a different component
   const printCountriesNames = () => filteredCountries.map(country =>
-    <div> {country.name.common} </div>
+    <CountryName name={country.name.common} key={country.name.official}/>
   )
 
-  return (
-    <div>
-      {filteredCountries.length > 10 ?
-       "Too many matches, specify another filter" : printCountriesNames()}
-    </div>
-  )
+  if(filteredCountries.length > 10){
+    return <div> Too many mataches, specify another filter </div>
+  } else if (filteredCountries.length <= 10 && filteredCountries.length > 1) {
+    return <div> {printCountriesNames()} </div>
+  } else if (filteredCountries.length === 1){
+    console.log("Found the country:" ,filteredCountries[0])
+    return <Country country={filteredCountries[0]}/>
+  } else return null
 }
 
 const Search = ({setCountry, searched, setSearched}) => {
