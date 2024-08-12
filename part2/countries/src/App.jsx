@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
+import weatherService from './services/weather'
 import Country from './components/Country'
 
 const ShowButton = ({name, setSearched}) => {
@@ -34,7 +35,7 @@ const ListCountries = ({countries, searched, setSearched}) => {
   } else return null
 }
 
-const Search = ({setCountry, searched, setSearched}) => {
+const Search = ({searched, setSearched}) => {
 
   const handleSearchChange = (event) => {
     setSearched(event.target.value)
@@ -52,7 +53,6 @@ const Search = ({setCountry, searched, setSearched}) => {
 }
 
 function App() {
-  const [country, setCountry] = useState(null)
   const [countries, setCountries] = useState(null)
   const [searched, setSearched] = useState("")
 
@@ -66,7 +66,6 @@ function App() {
   return (
     <div>
       <Search
-        setCountry = {setCountry}
         searched={searched}
         setSearched={setSearched}
       />
