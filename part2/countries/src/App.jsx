@@ -2,7 +2,17 @@ import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
 import Country from './components/Country'
 
-const CountryName = ({name}) => <div> {name} </div>
+const ShowButton = ({name, setSearched}) => {
+  const showCountry = () => setSearched(name)
+  return (
+    <button onClick={showCountry}>show</button>
+  )
+}
+
+const CountryName = ({country, setSearched}) =>
+      <div>
+        {country.name.common} <ShowButton name={country.name.common} setSearched={setSearched}/>
+      </div>
 
 const ListCountries = ({countries, searched, setSearched}) => {
   if( countries === null ) return null
@@ -11,7 +21,7 @@ const ListCountries = ({countries, searched, setSearched}) => {
         filter(country => country.name.common.toLowerCase().includes(searched.toLowerCase()))
 
   const printCountriesNames = () => filteredCountries.map(country =>
-    <CountryName name={country.name.common} key={country.name.official}/>
+    <CountryName country={country} setSearched={setSearched} key={country.name.official}/>
   )
 
   if(filteredCountries.length > 10){
